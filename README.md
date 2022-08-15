@@ -16,5 +16,5 @@ with any questions!
 The orientation will span Monday through Friday, August 15th - August 19th. 
 Most sessions will be conducted in Saieh 203.
 
-The agenda can be found [[https://docs.google.com/spreadsheets/d/1lGozuf9L_HbaAjaEE29sXuJ2MjqB4rpaE88L3OAgMiU/edit?usp=sharing][here
+The agenda can be found [[https://docs.google.com/spreadsheets/d/1lGozuf9L_HbaAjaEE29sXuJ2MjqB4rpaE88L3OAgMiU/edit?usp=sharing][here]]
 
