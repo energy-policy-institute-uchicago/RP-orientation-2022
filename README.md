@@ -1,4 +1,4 @@
-* BFI Predoctoral Fellow Orientation (Fall 2022)
+# BFI Predoctoral Fellow Orientation (Fall 2022)
 
 Welcome to the Bekerman-Friedman Institute! During this orientation we will brief
 you in about the tools we believe will help you the most in your RAship at BFI.
@@ -11,7 +11,7 @@ In this repo, you will have all the orientation materials, and some information
 related to your first days at BFI. Please reach out to maskinner@uchicago.edu
 with any questions!
    
-** Agenda
+## Agenda
 
 The orientation will span Monday through Friday, August 15th - August 19th. 
 Most sessions will be conducted in Saieh 203.
