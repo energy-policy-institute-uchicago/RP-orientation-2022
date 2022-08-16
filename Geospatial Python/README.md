@@ -10,11 +10,13 @@ Many of these material are based on [Sebastian Hohmann's GIS course](https://git
 - Go [here](https://docs.conda.io/en/latest/miniconda.html) and download the installer appropriate for your system (choose Python 3.9). **IMPORTANT: Do NOT choose the latest one, but scroll down a bit to the one called "Python 3.9"**
 - Keep the defaults for installation (adjust the path if you want to, keep conda as default python ticked, dont add to PATH).
 - Once installed, `Start -> Anaconda3 (64-bit) -> Anaconda Prompt (Miniconda3)` (you can add the conda command prompt to your task bar for easy access).
-- Run the following command in the conda prompt:
+- Run the following command in the conda prompt: 
 
 ```
 conda update conda
 ```
+
+- **IMPORTANT: If you are working on a PC, you will Anaconda Prompt for all installation commands (through section 4). If you are working on a Mac, you do can use terminal once you installed a distribution of conda. Simply type the same commands in the terminal.**
 
 ## 2 Creating a virtual environment
 - Create a folder where you would like to keep your virtual environment
