@@ -16,7 +16,7 @@ Many of these material are based on [Sebastian Hohmann's GIS course](https://git
 conda update conda
 ```
 
-- **IMPORTANT: If you are working on a PC, you will Anaconda Prompt for all installation commands (through section 4). If you are working on a Mac, you do can use terminal once you installed a distribution of conda. Simply type the same commands in the terminal.**
+- **IMPORTANT: If you are working on a PC, you will use Anaconda Prompt for all installation commands (through section 4). If you are working on a Mac, you can use terminal once you installed a distribution of conda. Simply type the same commands in the terminal.**
 
 ## 2 Creating a virtual environment
 - Create a folder where you would like to keep your virtual environment
