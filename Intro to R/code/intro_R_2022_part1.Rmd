@@ -1,0 +1,523 @@
+---
+title: 'EPIC Orientation 2022: Introduction to R'
+github_document: default
+date: "Updated: `r format(Sys.Date(), format = '%d %B %Y')`" 
+output:
+  html_document:
+    highlight: zenburn
+    theme: default
+  md_document: default
+  pdf_document: default
+  variant: markdown_github
+number_sections: yes
+---
+
+## Overview
+1. basic operations (control flow, arithmetic, define a function, etc.)
+2. data types (list, vectors, data frame, data table)
+3. data manipulation (import, collapse, reshape, etc.)
+4. basic string operation
+
+5. ggplot
+6. table output (regression, summary stats)
+7. create an example of publication-quality figure
+
+## Useful resources: 
+Today's session will only give you a very brief intro to R. It is like the tip of an iceberg, compared to your actual research tasks. Our goal today is to 
+1. tell you the very basics that we believe are most important to know, so that it looks familiar when you start using them 
+2. convince you that R can achieve many things (or there are packages that can achieve many things), so that you know where to search if needed. 
+
+
+1. Read documentations / cheatsheets (I think many of the popular packages have their own "cheatsheets", which are 2-3 pages PDF that list out the most important functions of that package and how you should use them)
+2. Learn from other people's code (from Internet or from your colleagues). Take advantage of the user community.  
+
+Useful resources: 
+* I learned a lot from Grant McDermott's "Data science for economists"  slides. Link [here](https://github.com/uo-ec607/lectures#data-science-for-economists)
+* https://cfss.uchicago.edu/notes/why-visualize-data/
+* https://github.com/yixinsun1216/covertoperations_manual/wiki/R-Guide 
+* https://tutorials.iq.harvard.edu/R/Rstatistics/Rstatistics.html
+* http://genomicsclass.github.io/book/pages/dplyr_tutorial.html
+* https://cran.r-project.org/web/packages/dplyr/vignettes/dplyr.html
+* https://tutorials.iq.harvard.edu/R/Rgraphics/Rgraphics.html
+* https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html
+* https://www.machinelearningplus.com/data-manipulation/datatable-in-r-complete-guide/
+
+
+
+## 0.0 Install/load packages; set directories
+```{r, warning=FALSE}
+# Change your directory here
+REPODIR <- "/Users/yixinzhou/Desktop/Github/RP-orientation-2022/Intro to R"
+
+
+# I like to include a script that loads all the packages and set different directories 
+source(paste(REPODIR, "code/directory_R.R", sep = "/"))
+
+# get help 
+?help # alternatively `help(source)`
+vignette("dplyr")  # gives a brief intro to a package 
+```
+
+* `testit` package is not used for data manipulation. We will only use the `assert` function to do various sanity checks. I found it very important 
+** A strange thing with R is that it does not stop running even if it throws you an error message in the middle. 
+
+## The very basics 
+#### Data types 
+You will encounter a variety of data structures in R:
+* vector
+  * a one-dimensional array
+  * elements of a vector must be of the same type
+    * `numeric <- c(0.1, 2.2. 4.678)`
+    * `integer <- c(5, 10, 100)`
+    * `character <- c("EPIC", "is", "epic!")`
+    * `logical <- c(T, F, T, T)`
+* factors
+  * special vectors that contain categorical values 
+  * nominal values as a vector of integers and an internal vector of character strings mapped to these integers
+* matrix
+  * a special type of vector which has multiple dimensions 
+  * all columns in a matrix must be of the same type (numeric, character, etc.) and the same length
+* data.frame/tibble/data.table 
+  * more general than a matrix, different columns can have different modes (numeric, character, factor, etc.)
+* list
+  * an ordered collection of objects (components), a list allows you to gather (possibly unrelated) objects under one name (e.g. a string, a numeric vector, a matrix, and a scalar)  e.g. `mylist <- list("Hello", c(1,2,5.3,6,-2,4), matrix(1:20, nrow=5,ncol=4), 9)`
+  * you can also make lists of lists e.g. `mylist <- list(list1, list2, list3)`
+
+#### Basic arithmatic
+```{r}
+100 %/% 60
+100 %% 60
+
+# for negation, use ! 
+!is.na(CODEDIR) 
+
+#  whether an object is contained within a list of items 
+"Noodles" %in% c("Noodles", "Nella", "Nile", "Nandos")
+!("Plein air" %in% c("Noodles", "Nella", "Nile", "Nandos"))
+
+# You can use = and <- for assignment. I think both are fine as long as you don't get confused and are consistent. 
+restaurants <- c("Noodles", "Nella", "Nile", "Nandos")
+restaurants = c("Noodles", "Nella", "Nile", "Nandos")
+
+# indexing
+restaurants[1]
+restaurants[c(1,3)]
+
+
+temp_df <- data.frame(restaurants = restaurants, 
+                      rating = c(6,9,8,9))
+temp_df[1,2] # first row, second column 
+temp_df[c(1,4), 2] # first and fourth row, second column
+
+```
+
+
+```{r}
+# vectors  ---------------------------------------
+# create a vector
+myvector <- c("Saieh", "Harris", "Harper Center")
+
+# vectors are not sorted, so you can see them as a set 
+vec1 <- sample(1:20, 5)
+assert(is.vector(vec1))
+vec2 <- sample(10:30, 5)
+setequal(vec1, vec2)
+setdiff(vec1, vec2)
+
+ # you can easily sum up a vector 
+sum(vec1) # you can easily sum up a vector 
+
+
+# (named) lists  ---------------------------------------
+my_list = list(df = "Yixin", b = c(1,2,3), c = temp_df)
+my_list[[1]]  # to index a list, use [[]]
+
+names(my_list)
+my_list$a # alternatively, you can use the name of each object 
+
+names(my_list) <- c("Name", "Number", "Rating") # can rename a list 
+my_list$Name
+
+```
+
+#### Define functions
+```{r}
+#create function called temp.convert()
+temp.convert <- function(temp.C = 30) {
+  temp.F <- temp.C*1.8 + 32
+  print(paste0(temp.C, "C is equivalent to ", temp.F, "F"))
+  temp.F # equivalent to `return(temp.F)`
+}
+
+temp.convert() # uses default temp.C = 30
+temp.convert(23) 
+
+
+rm(my_list, vec1, vec2, temp_df, restaurants)
+```
+* I think one of the main advantages of R, compared to Stata, is that it is so easy to define a function in R. This helps a lot for the clarity of code (you don't need to copy and paste every time you want to do similar manipulations), and obviously making change is very easy. 
+** One thing that I like to do (not just in R) is to define important functions in a separate script, and `include` (Stata) or `source` (R) this script in the main script.
+
+
+
+## 1.0 Package basics 
+1. Tidyverse 
+* dplyr, tidyr: provides an enhanced version of base R's data.frame in the form of tibble
+* %>% pipe operator 
+* ggplot2 (plot), stringr (string operation), lubridate (date), etc.
+
+2. data.table
+* also provides an enhanced version of data.frame in the form of data.table
+* compared to tidyverse, its advantages are (1) more concise, (2) very fast, 
+  (3) memory efficient.... (see [these slides](https://raw.githack.com/uo-ec607/lectures/master/05-datatable/05-datatable.pdf) )
+* `data.table` functions cannot be applied on dataframes or tibbles, but some dplyr functions may work on `data.table`
+
+Today, when dealing with data manipulation, I will use data.table, instead of dataframes or tibbles. But 
+* Other packages from tidyverse, such as `ggplot2`, `stringr`, `lubridate`, can be used on data table without a problem 
+* You can also pipe (see below). 
+* I will also include how you would do the equivalent operations using dplyr. 
+
+This [amazing cheatsheet](https://atrebas.github.io/post/2019-03-03-datatable-dplyr/#joinbind-data-sets) lists out how you do the same thing in dyplr and data.table. 
+
+## 1. Data basics
+### a. Import data 
+R also has the capability to import other file formats including Stata and Excel files using functions such as `read_dta()`, and `read_excel()`. You may wish to explore the `foreign` package to find out more. 
+
+There may also be functions that read large csv datasets very fast. See `fread` from `data.table` package. (more on `data.table` below)
+
+```{r}
+#import a csv file 
+dt <- paste(REPODIR, DATADIR, "tv_hurricanes_by_network.csv", sep = "/") %>% 
+  read.csv() %>% 
+  data.table() # read it as data.table 
+  # setDT()
+
+
+df <- as_tibble(dt) # convert the data table to a tibble 
+# df <- as.data.frame(dt)
+
+
+# How to import multiple csvs with similar names at the same time 
+files <- list.files(path= paste(REPODIR, DATADIR, sep = "/"), 
+                    pattern="^csv_", full.names=T)
+files
+rbindlist(lapply(files, fread))
+``` 
+
+### b. Examine our data.
+```{r}
+#see structure of object
+str(dt)
+
+#see class of a variable
+class(dt$Query)
+
+# a hack: in R, TRUE converts to 1, False converts to 0 
+head(is.na(dt))
+class(is.na(dt))
+assert(sum(is.na(dt)) == 0) # assert that non of the entries in dt is missing
+```
+
+
+### c. Basic summary 
+```{r}
+#see dimensions (in this order: row, column)
+dim(dt)
+
+#view the first 2 obs
+head(dt, 2)
+#view the last 3 obs
+tail(dt, 3)
+
+#summary statistics
+summary(dt)
+
+#Find the minimum value of CNN
+min(dt$CNN) 
+#Sum of all obs in BBC.News
+sum(dt$BBC.News)
+#Standard deviation of Fox News
+sd(dt$FOX.News)
+#Unique name of hurricanes 
+class(unique(dt$Query))
+class(unique(dt[, .(Query)]))
+```
+
+### d. subset and order  
+dt[i, j, by]
+```{r}
+## subset 
+dt[Query == "Hurricane Maria"] %>% head(3)
+
+# subset (rows and) columns  
+# .(a,b,c) means list(a,b,c) here
+dt[Query == "Hurricane Maria", .(Date, Query, BBC.News)] %>% head(3)
+
+## order
+dt[order(Query, -Date)] %>% head() # temporarily order the dataset
+setorder(dt,  Query, -Date)
+
+```
+
+### e. change columns  
+* To add or modify a column, use `:=` operator. 
+** `:=` is modifying by reference, i.e. in place. So we don't have to reassign the object to save these changes.
+```{r}
+#Multiple CNN by 2
+dt[, CNN.times.2 := CNN*2] 
+colnames(dt)
+
+#Add/change variables together
+dt[, `:=`(CNN.plus.BBC = CNN + BBC.News, 
+          Date = as.Date(Date, format = "%m/%d/%y"))]
+
+#Remove newly created columns
+dt[, c("CNN.times.2", "CNN.plus.BBC") :=  NULL]
+
+#Tabulate the Query variable, how many observations are Hurricane Irma?
+table(dt$Query)
+
+# basic string operations (grepl or stringr package)
+dt[, Query_shorthand := gsub("Hurricane ", "", Query)]
+dt[, Query_shorthand := NULL]
+
+# basic date-time operation 
+dt[, yr_month := format(as.Date(Date), "%Y-%m")]
+```
+
+** `:=` can help us sub-assign easily: when you only want to change a variable on a subset of your data, 
+```{r}
+dt[,  meaningless_var := 1] %>%
+  .[Query == "Hurricane Maria", meaningless_var := meaningless_var * 3] %>% 
+  setnames(c("meaningless_var"), c("renamed_meaningless")) %>% 
+  .[order(-renamed_meaningless, Date)] %>% # temporarily sort 
+  head(10)
+
+dt[, renamed_meaningless := NULL]
+
+```
+* Note that `:=` modifies in place, so be careful if you are making some wild changes to your data and you don't know if your code works. It is better to use the `copy()` function to create a copy of your dataset. 
+
+
+### f. Collapse/aggregate dataset  
+```{r}
+# collapse the dataset to Query-yr_month level 
+dt[, .(max_BBC = max(BBC.News), 
+       min_BBC = min(BBC.News), 
+       count = .N), by = .(Query, yr_month)] 
+
+# Apply one function to multiple columns: 
+# collapse a dataset 
+cols <- c("BBC.News", "CNN", "FOX.News", "MSNBC")
+dt[, lapply(.SD, function(x) round(mean(x), digits = 2)), 
+    by = .(Query, yr_month), .SDcols = cols]
+
+
+# create new columns that summarize the data 
+new_cols <- paste0("Mean.", cols) # new column names 
+dt[, (new_cols) := lapply(.SD, function(x) round(mean(x), digits = 2)), 
+        by = .(Query, yr_month), .SDcols = cols]
+head(dt)
+dt[yr_month == "2017-08", ..new_cols] # subset data (by column names)
+dt[, (new_cols) := NULL] # remove the new columns 
+
+
+# shortcut
+dt[, lapply(.SD, function(x) round(mean(x), digits = 2)), 
+   by = .(Query, yr_month), .SDcols = is.numeric][]
+```
+
+
+### g. How to do it in data frame 
+```{r}
+df <- as_tibble(dt)
+df %<>% mutate(CNN.times.2 = CNN*2) # create a new column 
+df %<>% select(-CNN.times.2) # remove a column 
+
+
+# sub-assign variables 
+df %<>%  
+  mutate(meaningless_var = 1) %>%
+  mutate(meaningless_var = case_when(
+    Query == "Hurricane Maria" ~ meaningless_var * 3,
+    Query != "Hurricane Maria" ~ meaningless_var)) %>% 
+  arrange(desc(meaningless_var), Date) %>%
+  head(10)
+
+df %<>% select(-meaningless_var)
+
+# collapse 
+df %>% 
+  group_by(Query, yr_month) %>%
+  summarise(across(cols, ~ mean(.x, na.rm = TRUE)))
+
+# generate new columns that summarize the data 
+df %>% 
+  group_by(Query, yr_month) %>%
+  mutate(new_cols = across(cols, ~ mean(.x, na.rm = TRUE)))
+```
+
+
+### h. Merge datasets 
+* `setkey` in `data.table` will make merge (and other data manipulation such as filtering) much faster. See this data.table [vignette](https://rdatatable.gitlab.io/data.table/articles/datatable-keys-fast-subset.html)
+** The improvement is not obvious here since it is a very small dataset. nut it will be obvious on large datasets. 
+
+* From my own experience, it is easier to make mistakes when merging in R than in Stata. 
+** In Stata, since you specify 1:1 or 1:m or m:1 when writing code
+** Therefore, it is good practice to always use `assert` statement after merge (in any language). For example, do you expect the merge to have a 1-1 correspondence? 1-m? etc.
+
+* Know what kind of merge you want to do. Which one is your main dataset, from which you don't want to lose any observations? 
+** In `merge` function, always specify `all.x`, `all.y` or `all`. 
+* If you only do merge(x, y, by = "something"), that is equivalent to inner_join. This operation will drop all observations from both datasets that do not find a match. 
+* `all.x = TRUE` is equivalent to left_join. Basically it keeps all observations in the first dataset, even if there is no match in the second dataset. However, it will drop all the observations in the second dataset that fail to find a match in the first one. 
+* `all.y = TRUE` is right_join
+* `all = TRUE` is full_join(). It keeps all observations. 
+```{r}
+# set keys 
+keys <-  c("Query", "Date")
+setkeyv(dt, keys)
+
+# create a new data table 
+locations <- data.table(
+  hurricane = c("Hurricane Maria", 
+                "Hurricane Irma", 
+                "Hurricane Harvey", 
+                "Hurricane Jose", 
+                "Hurrican Ida"), 
+  location = c("Puerto Rico", 
+               "Florida, Georgia", 
+               "Texas, Louisiana",
+               "Massachusetts", 
+               "Louisiana"))
+
+# merge 
+with_location <- merge(dt, locations, by.x = c("Query"), by.y = c("hurricane"), all.x = TRUE)
+assert(sum(with_location$Query == "Hurrican Ida") == 0) # "Hurrican Ida" should not be in the finl dataset 
+
+merge(dt, locations, by.x = c("Query"), by.y = c("hurricane"), all = TRUE) %>%
+  .[is.na(MSNBC)] # you see "Hurrican Ida" here
+
+```
+
+### i. Reshape dataset 
+Our data currently has 4 separate columns for news coverage, one for each TV station. What if we wanted to restructure our data from a **wide to long** format, so the data of all 4 TV stations can be in a single variable?
+```{r}
+# data table way ------------------------- 
+plot_dt <- melt(dt, id.vars = c("Query", "Date"), 
+                 measure = c("BBC.News", "CNN", "FOX.News", "MSNBC"), 
+                 value.name = "coverage", variable.name = "tv.station")
+
+
+
+# dcast: long to wide 
+# dyplr way ----------------------------
+#reshape from wide to long
+plot_df <- pivot_longer(df, 
+        BBC.News:MSNBC,    #columns to be 'gathered'              
+        names_to = "tv.station", #name of the new column of 'old columns to be gathered'
+        values_to = "coverage") #name of the 'gathered values' 
+```
+
+
+
+## 2. More advanced 
+### a. vectorized functions 
+The magic of R is that functions can work **element-wise** on vectors. Imagine we had a vector which contains a sequence of numbers from 1 to 10 million, let's call this variable `test_var`.
+
+Now imagine we wanted to square every number in this sequence and put it in a new variable called `test_var2`. A 'brute force' method might be to create a for loop. 
+```{r}
+#create a vector called test_var which contains a sequence of numbers from 1 to 10 million
+test_var <- seq(1, 1000000, 1)
+head(test_var)
+#check if it is a vector
+is.vector(test_var)
+
+## for loop method 
+#create a new variable called test_var2
+test_var2 <- test_var
+#start the clock
+time_forloop <- proc.time()
+#loop through each element in test_var and square it
+for (i in test_var) {
+  test_var2[i] <- i^2 
+}
+#stop the clock
+proc.time() - time_forloop
+
+
+## vectorized function 
+#start the clock
+time_vectorized <- proc.time()
+#apply it to the vector
+test_var2 <- test_var^2
+#stop the clock
+proc.time() - time_vectorized
+
+rm(test_var, test_var2)
+```
+
+However, this method does not work for a list. But that's okay! We can use the function called `map()` under the `purrr` package, which 'maps' a function over a list or vector **element-wise**, and returns a list as the output (the closest base R equivalent is `lapply`). First, let's create a function called `temp.convert()` that converts temperature from Celsius to Fahrenheit.
+```{r}
+#create a list called test_var which contains a sequence of numbers from 1 to 10 million
+test_var <- as.list(seq(1, 1000000, 1))
+#check if it is a list
+is.list(test_var)
+#try 'squaring' the list
+#test_var2 <- test_var^2 
+rm(test_var)
+
+#create a list of temperatures in celsius
+temp.list <- list(30, 20, 39, 10, -1, -7, -8, -9)
+
+#use map function to 'map' temp.convert() over temp.list
+temps.converted <- map(.x = temp.list, .f = temp.convert)
+#what type of object is temps.converted?
+class(temps.converted)
+```
+Note: `map` function can also be applied to a vector. Variants of `map()` are `map_lgl()`, `map_int()`, `map_dbl()` and `map_chr()` which return **vectors** of the corresponding type. To return dataframes, one can use `map_dfr()` and `map_dfc()`. When given a list of vectors, either function binds the vectors into a data frame by rows or columns. Remember that these last 2 variants require the `dplyr` package to work.
+
+
+### c. string operation 
+* use functions from base R or `stringr` package to clean up strings 
+* I found this `stringr` cheatsheet super helpful: [link](https://github.com/rstudio/cheatsheets/blob/main/strings.pdf)
+Useful in two cases: 
+1. you attempt to merge two datasets based on strings 
+2. you want to digitize PDFs (including scanned PDFs)
+
+I will focus on basic operations here. But here are a list of useful packages when handling strings: 
+* fuzzy match: `fedmatch` package (function `merge_plus`). [Link](https://cran.r-project.org/web/packages/fedmatch/vignettes/Intro-to-fedmatch.html)
+* digitize PDFs: 
+** `pdftools`: `pdf_data()` is suitable to read a table with clean format. `pdf_text()` provides great flexibility when your table has more quirks.  
+** `tabulizer`
+```{r}
+# find out if a word is in a string 
+"BFI orientation 2022" %like% "BFI"
+str_detect("BFI orientation 2022", "BFI") # equivalent to %like% 
+str_detect("BFI orientation 2022", "^BFI") # ^xxx: a string that starts with xxx
+str_detect("BFI orientation 2022", "BFI$") # xxx$: a string that ends with xxx
+str_detect("BFI orientation 2022", "BFI|Booth") # OR statement 
+
+# substitute some characters (they are equivalent)
+gsub("BFI", "Booth", "BFI orientation 2022")
+str_replace("BFI orientation 2022", "BFI", "Booth")
+
+# concatenate (they are equivalent)
+str_c("Hyde Park", "is", "like", "a", "food", "desert." , sep = " ")
+str_c(c("Hyde Park", "is", "like", "a", "food", "desert."), collapse = " ")
+
+# split a string; delete additional whitespaces
+str_split("Illinois,     Chicago", ",") %>% unlist() %>% str_squish()
+
+# string interpolation (see str_interp documentation)
+# will be useful when Stan talks about generating latex files 
+user_name <- "smbache"
+amount <- 6.656
+account <- 1337
+str_interp("User ${user_name} (account $[08d]{account}) has $$[.2f]{amount}.")
+
+```
+
+
+### e. geospatial in R (session on Geospatial R on Wednesday)
+
+
