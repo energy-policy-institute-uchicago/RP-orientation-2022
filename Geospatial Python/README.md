@@ -4,7 +4,7 @@ Python code relies heavily on external libraries. Because external libraries upd
 
 Creating a virtual environment is perhaps the most efficient way to implement this. In this tutorial, we will create a virtual environment and work exclusively in this virtual environment. 
 
-Many of these material are based on [Sebastian Hohmann's GIS course](https://github.com/sebastianhohmann/gis_course). 
+Many of these materials are based on [Sebastian Hohmann's GIS course](https://github.com/sebastianhohmann/gis_course). 
 
 ## 1 Conda
 - Go [here](https://docs.conda.io/en/latest/miniconda.html) and download the installer appropriate for your system (choose Python 3.9). **IMPORTANT: Do NOT choose the latest one, but scroll down a bit to the one called "Python 3.9"**
